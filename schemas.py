@@ -12,7 +12,8 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal
+from datetime import datetime
 
 # Example schemas (replace with your own):
 
@@ -41,8 +42,19 @@ class Product(BaseModel):
 # Add your own schemas here:
 # --------------------------------------------------
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Event(BaseModel):
+    """
+    Christian events collection schema
+    Collection name: "event"
+    """
+    title: str = Field(..., description="Event title")
+    description: Optional[str] = Field(None, description="Event description")
+    type: Literal['worship','conference','retreat','concert','service','youth','prayer','other'] = Field('other', description="Type of event")
+    start_date: datetime = Field(..., description="Event start date/time (UTC)")
+    end_date: Optional[datetime] = Field(None, description="Event end date/time (UTC)")
+    location_name: Optional[str] = Field(None, description="Venue or location name")
+    latitude: float = Field(..., ge=-90, le=90, description="Latitude")
+    longitude: float = Field(..., ge=-180, le=180, description="Longitude")
+    city: Optional[str] = Field(None, description="City")
+    country: Optional[str] = Field(None, description="Country")
+    url: Optional[str] = Field(None, description="Event URL or registration link")
